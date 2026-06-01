@@ -1,10 +1,12 @@
 """Post-process: fix tags, square cover art."""
+
 from pathlib import Path
 from typing import Optional
 import tempfile
 from mutagen.mp4 import MP4, MP4Cover
 from mutagen.id3 import ID3, APIC
 from PIL import Image
+
 
 def _sq(thumb, size=800):
     with Image.open(thumb) as img:
@@ -16,12 +18,13 @@ def _sq(thumb, size=800):
         c.save(b, format="PNG")
         return b.getvalue()
 
+
 def repair(path, title, artist, album, num, thumb=None):
     ext = path.suffix.lower()
     if ext == ".m4a":
         try:
             a = MP4(str(path))
-            a.tags["\xA9nam"]=title; a.tags["\xA9ART"]=artist; a.tags["\xA9alb"]=album; a.tags["trkn"]=[(num,0)]
+            a.tags["©nam"]=title; a.tags["©ART"]=artist; a.tags["©alb"]=album; a.tags["trkn"]=[(num,0)]
             if thumb and thumb.exists():
                 a.tags["covr"]=[MP4Cover(_sq(thumb), imageformat=MP4Cover.FORMAT_PNG)]
             a.save()

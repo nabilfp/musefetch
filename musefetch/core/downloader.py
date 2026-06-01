@@ -1,17 +1,11 @@
-"''Playlist parser.'""'' 'import yt_dlp' 'from dataclasses import dataclass' 'from typing import List' '' '@dataclass' 'class Track:' '    idx: int' '    title: str' '    artist: str' '    album: str' '    duration: int' '    video_id: str' '    url: str' '' 'class PlaylistParser:' '    def __init__(self, quiet=True):' '        self.opts = {quiet: quiet, no_warnings: quiet, extract_flat: True, skip_download: True}' '' '    def parse(self, url: str) -> dict:' '        with yt_dlp.YoutubeDL(self.opts) as ydl:' '            info = ydl.extract_info(url, download=False)' '        if info is None:' '            raise ValueError(Could
-not
-extract
-playlist
-info.)' '        entries = info.get(entries) or []' '        tracks = []' '        for i, entry in enumerate(entries, start=1):' '            if entry is None:' '                continue' '            vid = entry.get(id)' '            if not vid:' '                continue' '            tracks.append(Track(' '                idx=i,' '                title=entry.get(title, Unknown),' '                artist=entry.get(artist) or entry.get(uploader, Unknown),' '                album=entry.get(album) or info.get(title, Unknown
-Album),' '                duration=entry.get(duration) or 0,' '                video_id=vid,' '                url=fhttps://music.youtube.com/watch?v={vid},' '            ))' '        return {' '            title: info.get(title, Untitled
-Playlist),' '            uploader: info.get(uploader, Unknown),' '            track_count: len(tracks),' '            tracks: tracks,' '        }' > musefetch/core/parser.py
-printf '%s\n' '""Download
-engine."''
+"""Download engine."""
+
 import asyncio
 from pathlib import Path
 from dataclasses import dataclass
 import yt_dlp
 from musefetch.config import BASE_YDL_OPTS, DOWNLOAD_DIR, ensure_dirs
+
 
 @dataclass
 class ProgressEvent:
@@ -24,6 +18,7 @@ class ProgressEvent:
     eta: int = 0
     message: str = ""
     error: str = ""
+
 
 class Downloader:
     def __init__(self, cb):
@@ -49,7 +44,8 @@ class Downloader:
     async def download_track(self, track, pl_title, idx):
         self._cb(ProgressEvent("start", idx, track.title))
         opts = {**BASE_YDL_OPTS}
-        safe = "".join(c for c in pl_title if c not in '\\/:*?"<>|')[:60]
+        bad_chars = """\/:*?"<>|"""
+        safe = "".join(c for c in pl_title if c not in bad_chars)[:60]
         out = DOWNLOAD_DIR / safe
         out.mkdir(parents=True, exist_ok=True)
         opts["outtmpl"] = str(out / "%(track_number)s %(title)s.%(ext)s")

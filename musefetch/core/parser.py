@@ -1,7 +1,9 @@
 """Playlist parser."""
+
 import yt_dlp
 from dataclasses import dataclass
 from typing import List
+
 
 @dataclass
 class Track:
@@ -13,9 +15,15 @@ class Track:
     video_id: str
     url: str
 
+
 class PlaylistParser:
     def __init__(self, quiet=True):
-        self.opts = {"quiet": quiet, "no_warnings": quiet, "extract_flat": True, "skip_download": True}
+        self.opts = {
+            "quiet": quiet,
+            "no_warnings": quiet,
+            "extract_flat": True,
+            "skip_download": True,
+        }
 
     def parse(self, url: str) -> dict:
         with yt_dlp.YoutubeDL(self.opts) as ydl:
