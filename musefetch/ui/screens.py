@@ -1,36 +1,94 @@
-"''Main and Progress screens.'""'' 'import subprocess' 'from pathlib import Path' 'from textual.app import ComposeResult' 'from textual.containers import Horizontal, Vertical' 'from textual.screen import Screen' 'from textual.widgets import Static, Button, Input, Log' 'from textual.reactive import reactive' 'from textual.worker import get_current_worker' 'from musefetch.config import APP_TITLE, APP_VERSION' 'from musefetch.core.parser import PlaylistParser, Track' 'from musefetch.core.downloader import Downloader, ProgressEvent' 'from musefetch.core.postprocess import repair' 'from musefetch.ui.widgets import URLInput, TrackTable, OverallProgress' '' 'class MainScreen(Screen):' '    CSS_PATH = app.tcss' '    _mode = reactive(idle)' '' '    def compose(self) -> ComposeResult:' '        with Vertical(id=main-container):' '            yield Static(f{APP_TITLE}
-v{APP_VERSION}, id=logo)' '            yield Static(paste
-a
-YT
-Music
-playlist
-link.
-we
-handle
-the
-rest., id=subtitle)' '            yield URLInput()' '            yield Button(fetch
-playlist, id=action-btn, variant=primary)' '            yield Static(, id=status-msg)' '            yield TrackTable(id=track-list)' '' '    def on_mount(self):' '        self.query_one(#track-list, TrackTable).display = False' '' '    def watch__mode(self, mode):' '        btn = self.query_one(#action-btn, Button)' '        btn.label = {idle:fetch
-playlist,fetching:fetching...,ready:start
-download}.get(mode, fetch
-playlist)' '        btn.disabled = (mode == fetching)' '' '    def on_button_pressed(self, ev):' '        bid = ev.button.id' '        if bid == paste-btn:' '            self._paste()' '        elif bid == action-btn:' '            if self._mode == idle: self._fetch()' '            elif self._mode == ready:' '                info = getattr(self, _info, None)' '                if info: self.app.push_screen(ProgressScreen(info))' '' '    def _paste(self):' '        inp = self.query_one(#url-input, Input)' '        for cmd in ([termux-clipboard-get],[xclip,-selection,clipboard,-o],[wl-paste]):' '            try:' '                r = subprocess.run(cmd, capture_output=True, text=True, timeout=3, check=False)' '                if r.returncode == 0 and r.stdout.strip():' '                    inp.value = r.stdout.strip()' '                    self._status(clipboard
-pasted
-✓); return' '            except: pass' '        self._status(clipboard
-unavailable
-—
-paste
-manually)' '' '    def _status(self, msg):' '        self.query_one(#status-msg, Static).update(msg)' '' '    def _fetch(self):' '        url = self.query_one(#url-input, Input).value.strip()' '        if not url: self._status(paste
-a
-link
-first); return' '        if music.youtube.com not in url and youtube.com/playlist not in url:' '            self._status(only
-YT
-Music
-playlists
-are
-supported); return' '        self._mode = fetching; self._status(reading
-playlist...)' '        self.run_worker(self._do_fetch(url), thread=True)' '' '    async def _do_fetch(self, url):' '        w = get_current_worker()' '        try:' '            info = PlaylistParser().parse(url)' '            if w.is_cancelled: return' '            await self._preview(info)' '        except Exception as e:' '            await self._error(str(e))' '' '    async def _preview(self, info):' '        t = self.query_one(#track-list, TrackTable)' '        t.clear(); t.display = True' '        for tr in info[tracks]: t.add_row(str(tr.idx), tr.title, tr.artist, pending)' '        self._info = info; self._mode = ready' '        self._status(f{info[''track_count\']} tracks found — ready to download")
+"""Main and Progress screens."""
+
+import subprocess
+from pathlib import Path
+
+from textual.app import ComposeResult
+from textual.containers import Horizontal, Vertical
+from textual.screen import Screen
+from textual.widgets import Static, Button, Input, Log
+from textual.reactive import reactive
+from textual.worker import get_current_worker
+
+from musefetch.config import APP_TITLE, APP_VERSION
+from musefetch.core.parser import PlaylistParser, Track
+from musefetch.core.downloader import Downloader, ProgressEvent
+from musefetch.core.postprocess import repair
+from musefetch.ui.widgets import URLInput, TrackTable, OverallProgress
+
+
+class MainScreen(Screen):
+    CSS_PATH = "app.tcss"
+    _mode = reactive("idle")
+
+    def compose(self) -> ComposeResult:
+        with Vertical(id="main-container"):
+            yield Static(f"{APP_TITLE} v{APP_VERSION}", id="logo")
+            yield Static("paste a YT Music playlist link. we handle the rest.", id="subtitle")
+            yield URLInput()
+            yield Button("fetch playlist", id="action-btn", variant="primary")
+            yield Static("", id="status-msg")
+            yield TrackTable(id="track-list")
+
+    def on_mount(self):
+        self.query_one("#track-list", TrackTable).display = False
+
+    def watch__mode(self, mode):
+        btn = self.query_one("#action-btn", Button)
+        btn.label = {"idle":"fetch playlist","fetching":"fetching...","ready":"start download"}.get(mode, "fetch playlist")
+        btn.disabled = (mode == "fetching")
+
+    def on_button_pressed(self, ev):
+        bid = ev.button.id
+        if bid == "paste-btn":
+            self._paste()
+        elif bid == "action-btn":
+            if self._mode == "idle": self._fetch()
+            elif self._mode == "ready":
+                info = getattr(self, "_info", None)
+                if info: self.app.push_screen(ProgressScreen(info))
+
+    def _paste(self):
+        inp = self.query_one("#url-input", Input)
+        for cmd in (["termux-clipboard-get"],["xclip","-selection","clipboard","-o"],["wl-paste"]):
+            try:
+                r = subprocess.run(cmd, capture_output=True, text=True, timeout=3, check=False)
+                if r.returncode == 0 and r.stdout.strip():
+                    inp.value = r.stdout.strip()
+                    self._status("clipboard pasted ✓"); return
+            except: pass
+        self._status("clipboard unavailable — paste manually")
+
+    def _status(self, msg):
+        self.query_one("#status-msg", Static).update(msg)
+
+    def _fetch(self):
+        url = self.query_one("#url-input", Input).value.strip()
+        if not url: self._status("paste a link first"); return
+        if "music.youtube.com" not in url and "youtube.com/playlist" not in url:
+            self._status("only YT Music playlists are supported"); return
+        self._mode = "fetching"; self._status("reading playlist...")
+        self.run_worker(self._do_fetch(url), thread=True)
+
+    async def _do_fetch(self, url):
+        w = get_current_worker()
+        try:
+            info = PlaylistParser().parse(url)
+            if w.is_cancelled: return
+            await self._preview(info)
+        except Exception as e:
+            await self._error(str(e))
+
+    async def _preview(self, info):
+        t = self.query_one("#track-list", TrackTable)
+        t.clear(); t.display = True
+        for tr in info["tracks"]: t.add_row(str(tr.idx), tr.title, tr.artist, "pending")
+        self._info = info; self._mode = "ready"
+        self._status(f"{info['track_count']} tracks found — ready to download")
 
     async def _error(self, msg):
         self._mode = "idle"; self._status(f"error: {msg}")
+
 
 class ProgressScreen(Screen):
     CSS_PATH = "app.tcss"
@@ -44,7 +102,7 @@ class ProgressScreen(Screen):
 
     def compose(self) -> ComposeResult:
         with Vertical(id="progress-container"):
-            yield Static(f"downloading: {self.info[\'title\']}", id="progress-title")
+            yield Static(f"downloading: {self.info['title']}", id="progress-title")
             yield TrackTable(id="track-list")
             yield OverallProgress(id="overall-progress")
             yield Log(id="log-output", highlight=True)
