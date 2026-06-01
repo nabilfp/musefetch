@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[codz]
@@ -7,6 +8,12 @@ __pycache__/
 *.so
 
 # Distribution / packaging
+=======
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+>>>>>>> bdfcde1 (initial commit: ytmusic termux downloader v1.0.0)
 .Python
 build/
 develop-eggs/
@@ -20,6 +27,7 @@ parts/
 sdist/
 var/
 wheels/
+<<<<<<< HEAD
 share/python-wheels/
 *.egg-info/
 .installed.cfg
@@ -216,3 +224,15 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+=======
+*.egg-info/
+.installed.cfg
+*.egg
+.pytest_cache/
+.mypy_cache/
+.dmypy.json
+*.log
+.env
+.venv
+venv/
+>>>>>>> bdfcde1 (initial commit: ytmusic termux downloader v1.0.0)

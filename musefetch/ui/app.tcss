@@ -1,0 +1,135 @@
+Screen {
+    align: center middle;
+    background: #0d0d0d;
+    color: #e0e0e0;
+}
+#main-container {
+    width: 90%;
+    height: auto;
+    max-width: 100;
+    padding: 1 2;
+    border: solid #333;
+    background: #141414;
+}
+#logo {
+    text-align: center;
+    color: #ff4757;
+    text-style: bold;
+    margin-bottom: 1;
+}
+#subtitle {
+    text-align: center;
+    color: #747d8c;
+    margin-bottom: 2;
+}
+#url-input {
+    width: 1fr;
+    background: #1e1e1e;
+    border: solid #2f3542;
+    color: #f1f2f6;
+    padding: 0 1;
+}
+#paste-btn {
+    width: 8;
+    background: #2f3542;
+    color: #dfe4ea;
+    border: solid #57606f;
+    margin-left: 1;
+}
+#paste-btn:hover {
+    background: #57606f;
+}
+#action-btn {
+    width: 100%;
+    background: #ff4757;
+    color: #ffffff;
+    border: none;
+    margin-top: 1;
+    text-style: bold;
+}
+#action-btn:hover {
+    background: #ff6b81;
+}
+#action-btn:disabled {
+    background: #2f3542;
+    color: #747d8c;
+}
+#status-msg {
+    text-align: center;
+    color: #747d8c;
+    margin-top: 1;
+}
+#progress-container {
+    width: 95%;
+    height: 95%;
+    padding: 1 2;
+    border: solid #333;
+    background: #141414;
+}
+#progress-title {
+    text-align: center;
+    color: #ff4757;
+    text-style: bold;
+    margin-bottom: 1;
+}
+#track-list {
+    width: 100%;
+    height: 1fr;
+    background: #0d0d0d;
+    border: solid #2f3542;
+    color: #dfe4ea;
+}
+#overall-progress {
+    height: auto;
+    margin-top: 1;
+    color: #2ed573;
+}
+#log-output {
+    height: 6;
+    background: #0d0d0d;
+    border: solid #2f3542;
+    color: #a4b0be;
+    padding: 0 1;
+}
+#btn-row {
+    layout: horizontal;
+    height: auto;
+    margin-top: 1;
+}
+#cancel-btn {
+    width: 1fr;
+    background: #57606f;
+    color: #ffffff;
+    border: none;
+}
+#cancel-btn:hover {
+    background: #747d8c;
+}
+#done-btn {
+    width: 1fr;
+    background: #2ed573;
+    color: #0d0d0d;
+    border: none;
+    margin-left: 1;
+    text-style: bold;
+}
+DataTable {
+    background: #0d0d0d;
+    color: #dfe4ea;
+    border: none;
+}
+DataTable > .datatable--header {
+    background: #1e1e1e;
+    color: #ff4757;
+    text-style: bold;
+}
+DataTable > .datatable--cursor {
+    background: #2f3542;
+}
+DataTable > .datatable--hover {
+    background: #1e1e1e;
+}
+Scrollbar {
+    background: #1e1e1e;
+    color: #57606f;
+}
