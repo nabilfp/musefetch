@@ -1,13 +1,5 @@
-"''Musefetch - YT Music downloader for Termux.'""'' '' '__version__ = 1.0.0' > musefetch/__init__.py
+"""Configuration - paths, constants, yt-dlp presets."""
 
-
-
-printf '%s\n' 'from musefetch.app import main' 'main()' > musefetch/__main__.py
-printf '%s\n' 'from textual.app import App' 'from musefetch.ui.screens import MainScreen' '' 'class MusefetchApp(App):' '    CSS_PATH = ui/app.tcss' '    TITLE = musefetch' '    SUB_TITLE = yt
-music
-for
-termux' '    def on_mount(self):' '        self.push_screen(MainScreen())' '' 'def main():' '    MusefetchApp().run()' '' 'if __name__ == __main__:' '    main()' > musefetch/app.py
-printf '%s\n' '""Configuration."''
 from pathlib import Path
 
 HOME = Path.home()
@@ -17,9 +9,11 @@ CACHE_DIR = HOME / ".cache/musefetch"
 TEMP_DIR = CACHE_DIR / "tmp"
 ARCHIVE_FILE = CACHE_DIR / "archive.txt"
 
+
 def ensure_dirs():
     for d in (DOWNLOAD_DIR, CACHE_DIR, TEMP_DIR):
         d.mkdir(parents=True, exist_ok=True)
+
 
 AUDIO_FORMAT = "m4a"
 AUDIO_QUALITY = "0"
@@ -43,9 +37,19 @@ BASE_YDL_OPTS = {
     "noprogress": True,
     "progress_hooks": [],
     "postprocessors": [
-        {"key": "FFmpegExtractAudio", "preferredcodec": AUDIO_FORMAT, "preferredquality": AUDIO_QUALITY},
-        {"key": "EmbedThumbnail", "already_have_thumbnail": False},
-        {"key": "FFmpegMetadata", "add_metadata": True},
+        {
+            "key": "FFmpegExtractAudio",
+            "preferredcodec": AUDIO_FORMAT,
+            "preferredquality": AUDIO_QUALITY,
+        },
+        {
+            "key": "EmbedThumbnail",
+            "already_have_thumbnail": False,
+        },
+        {
+            "key": "FFmpegMetadata",
+            "add_metadata": True,
+        },
     ],
     "postprocessor_args": {
         "thumbnailsconvertor+ffmpeg_o": [
