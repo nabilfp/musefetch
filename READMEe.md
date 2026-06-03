@@ -114,6 +114,3 @@ MIT — pakai sesukamu. Kalau ada improvement, kirim PR.
 - [Textual](https://github.com/Textualize/textual) untuk TUI yang indah
 - [mutagen](https://github.com/quodlibet/mutagen) untuk surgery metadata
 """
-
-with open('/mnt/agents/output/README_ID.md', 'w') as f:
-    f.write(readme_id)
