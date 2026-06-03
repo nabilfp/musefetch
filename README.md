@@ -113,4 +113,3 @@ MIT — pakai sesukamu. Kalau ada improvement, kirim PR.
 - [yt-dlp](https://github.com/yt-dlp/yt-dlp) untuk heavy lifting
 - [Textual](https://github.com/Textualize/textual) untuk TUI yang indah
 - [mutagen](https://github.com/quodlibet/mutagen) untuk surgery metadata
-"""
